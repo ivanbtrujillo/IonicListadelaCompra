@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <!-- CSS DE IONIC Y CSS PERSONALIZADO -->
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <style type="text/css">
+      .form-control {
+        display: block;
+        width: 35%;
+        height: 34px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+                box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+        -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+             -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+                transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+      }
+      .form-control:focus {
+        border-color: #66afe9;
+        outline: 0;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+                box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+      }
+      .form-control::-moz-placeholder {
+        color: #777;
+        opacity: 1;
+      }
+      .form-control:-ms-input-placeholder {
+        color: #777;
+      }
+      .form-control::-webkit-input-placeholder {
+        color: #777;
+      }
+      .form-control[disabled],
+      .form-control[readonly],
+      fieldset[disabled] .form-control {
+        cursor: not-allowed;
+        background-color: #eee;
+        opacity: 1;
+      }
+      .item{
+        overflow: inherit;
+        text-overflow: inherit;
+        white-space: normal;
+      }
+
+      .panel-central{
+        /*Fundo de la lista*/
+        background-image: url('img/panel-central.jpg');
+        background-size: 200%;
+        
+      }
+      .list .item.item-accordion {
+        line-height: 38px;
+        padding-top: 0;
+        padding-bottom: 0;
+        transition: 0.09s all linear;
+      }
+      .list .item.item-accordion.ng-hide {
+        line-height: 0px;
+      }
+      .list .item.item-accordion.ng-hide-add,
+      .list .item.item-accordion.ng-hide-remove {
+        display: block !important;
+      }
+
+    </style>
+
+
+    <!-- IONIC ANGULAR JS -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <!-- JAVASCRIPT PERSONALIZADO-->
+    <script src="js/app.js"></script>
+
+    <!-- CORDOVA -->
+    <script src="cordova.js"></script>
+
+
+
+
+  </head>
+  <!-- Módulo starter y controlador ListaCompraController -->
+  <body ng-app="starter" ng-controller="ListaCompraCtrl">
+    <ion-side-menus>
+
+      <!-- ## CENTRO # -->
+      <!-- Centramos el contenido. Esta directiva indica que side-menu se mostrara al inicio (centrado) -->
+      <ion-side-menu-content>
+
+        <!--Barra superior -->
+        <ion-header-bar class="bar-royal" style="background-color:rgb(120,197,214)">
+          <!--Añadimos un boton para ver las listas (muestra el menu de la izquierda) -->
+          <button class="button button-icon" ng-click="mostrarMenuListas()">
+            <i class="icon ion-clipboard"></i>
+          </button>
+          <!--Titulo de la barra superior-->
+          <h1 class="title">{{listaActiva.title}}</h1>
+          <!-- Boton para crear una nueva tarea-->
+
+
+          <button class="button button-icon ion-navicon" ng-click="newsubList()">
+          </button>
+          <button class="button button-icon" ng-click="newTask()">
+            <i class="icon ion-compose"></i>
+          </button>
+        </ion-header-bar>
+
+        <!--Indicamos que el contenido sea scrollable-->
+        <ion-content scroll="true" class="panel-central">
+        <ion-item  class="item-stable" id="visor_lista"><i class="icon ion-card">&nbsp; </i>Euros gastados: {{listaActiva.gasto_total}} €</ion-item>
+          <!--Creamos una lista -->
+          <ion-list>
+            <!--Añadimos una tarea por cada tarea en el la lista actual-->
+            <ion-item ng-repeat="task in listaActiva.tasks" class="item-checkbox" style="padding-right: 15px; padding-left: 60px; width: 100%; background-#F3F781";>
+            <div class="checkbox" style="width: 80%;">
+
+              <label >
+                <input type="checkbox" ng-click="checkTask(task)" ng:model="task.checkbox" >
+              </label>     
+            </div>
+            <span style="color:#01A9DB">{{task.cantidad}}</span>
+            <div style="width: 90%;">
+              {{task.title}}
+        
+              <a class="item-icon-right" style="color: red" ng-click="deleteTask(task)">
+
+                <i class="icon ion-ios7-close-empty"></i>
+              </a>
+            </div>
+
+
+            </ion-item>
+
+            <div ng-repeat="sublista in listaActiva.sublistas">
+              <ion-item  class="item-stable" ng-click="toggleSublista(sublista)" ng-class="{active: isSublistaShown(sublista)}">
+                <button class="button button-icon" ng-click="newsubTask(sublista)">
+                  <i class="icon ion-compose" ng-click="newsubTask(sublista)"></i>
+                </button>
+                <button class="button button-icon" ng-class="isSublistaShown(sublista) ? 'ion-arrow-up-b' : 'ion-arrow-down-b'">
+                  {{sublista.title}}
+                </button >
+                <a class="item-icon-right" style="color: #0B3861" ng-click="deletesubList(sublista)">
+                  <i class="icon ion-trash-b"></i>
+                </a>
+
+
+              </ion-item>      
+              <ion-item class=" item-checkbox" ng-repeat="subtask in sublista.tasks" tyle="padding-right: 15px; padding-left: 60px; width: 100%; background-#F3F781"; ng-show="isSublistaShown(sublista)">
+     
+                  <div class="checkbox" style="width: 80%;">
+                    <label >
+                      <input type="checkbox" ng-click="checksubTask(subtask, sublista)" ng:model="subtask.checkbox" >
+                    </label>     
+                  </div>
+
+                  <span style="color:#01A9DB">{{subtask.cantidad}}</span>
+                  <div style="width: 90%;">
+                    {{subtask.title}}
+                    <a class="item-icon-right" style="color: red" ng-click="deletesubTask(subtask, sublista)">
+                      <i class="icon ion-ios7-close-empty"></i>
+                    </a>
+                  </div>
+ 
+              </ion-item>
+
+             
+            </div>
+
+
+
+          </ion-list>
+        </ion-content>
+
+      </ion-side-menu-content>
+
+
+      <!-- ## IZQUIERDA # -->
+      <!-- Menu de la izquierda. Creacion de listas -->
+      <ion-side-menu side="left">
+
+        <!--Barra superior-->
+        <ion-header-bar class="bar-royal" style="background-color:rgb(120,197,214)">
+          <!--Titulo de la barra-->
+          <h1 class="title">Listas</h1>
+          <!--Boton para crear una nueva lista-->
+          <button class="button button-icon ion-ios7-plus-outline" ng-click="newList()">
+          </button>
+        </ion-header-bar>
+
+        <!--Indicamos que el contenido sea scrollable -->
+        <ion-content  scroll="true" >
+          <!--Creamos una lista -->
+          <ion-list>
+            <!--Mostramos el titulo de cada proyecto, por cada proyecto en proyectos -->
+            <!--Al clickar en una lista, se le aplica la clase activa y se  llama a la funcion seleccionarLista pasandole el proyecto
+                y la scope $index-->
+            <ion-item ng-repeat="lista in listas" style="background-color: #81BEF7; padding-right: 40px; font-weight:500; color: white" ng-click="seleccionarLista(lista, $index)" ng-class="{active: listaActiva == lista}">
+      
+              {{lista.title}} {{lista.gasto_total}} €
+       
+              <a class="item-icon-right" style="color: red" ng-click="deleteList(lista)">
+                <i class="icon ion-ios7-close-empty"></i>
+              </a>
+            
+            </ion-item>
+          </ion-list>
+        </ion-content>
+
+      </ion-side-menu>
+
+        <!--MODALES -->
+        <!--Se carga esta template identificada como new-task.html -->
+        <script id="new-task.html" type="text/ng-template">
+
+          <!-- Aqui va el HTML de la template -->
+          <!-- Crear tareas -->
+          <div class="modal">
+
+            <!-- Cabecera del dialogo modal -->
+            <ion-header-bar class="bar-royal">
+              <h1 class="title">Nuevo elemento</h1>
+              <!--Buton clear limpia el estilo del boton -->
+              <button class="button button-large button-stable" ng-click="closeNewTask()"> &nbsp;
+                <i class="ion-close" style="color:red"></i>
+                &nbsp;
+              </button>
+            </ion-header-bar>
+
+            <!-- Contenido del dialogo modal -->
+            <ion-content>
+              <!--Cuando se envia el formulario, se crea una tarea -->
+              <form ng-submit="createTask(task)">
+
+                <!--Div que contiene un input para añadir la tarea -->
+                <div class="list">
+                  <label class="item item-input" >
+                    <span class="input-label" >Artículo</span>
+                    <input type="text" placeholder="¿Que quieres añadir?" ng-model="task.title" style="word-wrap: break-word;"></input>
+                  </label>
+                  <label class="item item-input">
+                    <span class="input-label" >Cantidad</span>
+                      <select ng-model="task.cantidad" class="form-control">
+                          <option selected></option>
+                          <option>1</option>
+                          <option>2</option>
+                          <option>3</option>
+                          <option>4</option>
+                          <option>5</option>
+                      </select>
+                  </label>
+                </div>
+                <!--Div con el boton para añadir enviar el formulario -->
+                <!--Clase padding para separarlo de los bordes -->
+                <div class="list" style="text-align: center" >
+                  <button type="submit" class="button" style="color: #642EFE"> <i class="ion-checkmark-round"></i> Añadir a {{listaActiva.backup_title}}
+
+                  </button>
+                </div>
+
+              </form>
+            </ion-content>
+          </div>
+        </script>
+
+        <script id="new-list.html" type="text/ng-template">
+
+          <!-- Aqui va el HTML de la template -->
+          <!-- Crear tareas -->
+          <div class="modal">
+
+            <!-- Cabecera del dialogo modal -->
+            <ion-header-bar class="bar-royal">
+              <h1 class="title">Nueva lista</h1>
+              <!--Buton clear limpia el estilo del boton -->
+              <button class="button button-large button-stable" ng-click="closeNewList()"> &nbsp;
+                <i class="ion-close" style="color: red"></i>
+                &nbsp;
+              </button>
+            </ion-header-bar>
+
+            <!-- Contenido del dialogo modal -->
+            <ion-content>
+              <!--Cuando se envia el formulario, se crea una tarea -->
+              <form ng-submit="createList(list)">
+                <!--Div que contiene un input para añadir la tarea -->
+                <div class="list">
+                  <label class="item" >
+                    <input type="text" placeholder="¿Como se llamara la lista?" ng-model="list.title" style="word-wrap: break-word;"></input>
+                  </label>
+                </div>
+                <!--Div con el boton para añadir enviar el formulario -->
+                <!--Clase padding para separarlo de los bordes -->
+                <div class="list" style="text-align: center" >
+                  <button type="submit" class="button" style="color: #642EFE" > <i class="ion-checkmark-round"></i> Crear lista
+
+                  </button>
+                </div>
+
+              </form>
+            </ion-content>
+          </div>
+        </script>
+         <script id="new-sublist.html" type="text/ng-template">
+
+          <!-- Aqui va el HTML de la template -->
+          <!-- Crear tareas -->
+          <div class="modal">
+
+            <!-- Cabecera del dialogo modal -->
+            <ion-header-bar class="bar-royal">
+              <h1 class="title">Nueva Sublista</h1>
+              <!--Buton clear limpia el estilo del boton -->
+              <button class="button button-large button-stable" ng-click="closeNewsubList()"> &nbsp;
+                <i class="ion-close" style="color: red"></i>
+                &nbsp;
+              </button>
+            </ion-header-bar>
+
+            <!-- Contenido del dialogo modal -->
+            <ion-content>
+              <!--Cuando se envia el formulario, se crea una tarea -->
+              <form ng-submit="createsubList(sublist)">
+                <!--Div que contiene un input para añadir la tarea -->
+                <div class="list">
+                  <label class="item" >
+                    <input type="text" placeholder="¿Como se llamara la sublista?" ng-model="sublist.title" style="word-wrap: break-word;"></input>
+                  </label>
+                </div>
+                <!--Div con el boton para añadir enviar el formulario -->
+                <!--Clase padding para separarlo de los bordes -->
+                <div class="list" style="text-align: center" >
+                  <button type="submit" class="button" style="color: #642EFE" > <i class="ion-checkmark-round"></i> Crear sublista en {{listaActiva.backup_title}}
+
+                  </button>
+                </div>
+
+              </form>
+            </ion-content>
+          </div>
+        </script>
+        <script id="new-subtask.html" type="text/ng-template">
+
+          <div class="modal">
+
+            <!-- Cabecera del dialogo modal -->
+            <ion-header-bar class="bar-royal">
+              <h1 class="title">Nuevo sub-elemento</h1>
+              <!--Buton clear limpia el estilo del boton -->
+              <button class="button button-large button-stable" ng-click="closeNewsubTask()"> &nbsp;
+                <i class="ion-close" style="color:red"></i>
+                &nbsp;
+              </button>
+            </ion-header-bar>
+
+            <!-- Contenido del dialogo modal -->
+            <ion-content>
+              <!--Cuando se envia el formulario, se crea una tarea -->
+              <form ng-submit="createsubTask(subtask)">
+
+                <!--Div que contiene un input para añadir la tarea -->
+                <div class="list">
+                  <label class="item item-input" >
+                    <span class="input-label" >Artículo</span>
+                    <input type="text" placeholder="¿Que quieres añadir?" ng-model="subtask.title" style="word-wrap: break-word;"></input>
+                  </label>
+                  <label class="item item-input">
+                    <span class="input-label" >Cantidad</span>
+                    
+                            <select ng-model="subtask.cantidad" class="form-control">
+                              <option selected></option>
+                              <option>1</option>
+                              <option>2</option>
+                              <option>3</option>
+                              <option>4</option>
+                              <option>5</option>
+                            </select>
+                  </label>
+                </div>
+                <!--Div con el boton para añadir enviar el formulario -->
+                <!--Clase padding para separarlo de los bordes -->
+                <div class="list" style="text-align: center" >
+                  <button type="submit" class="button" style="color: #642EFE"> <i class="ion-checkmark-round"></i> Añadir a {{sublistaActivaNombre}}
+                  </button>
+                </div>
+
+              </form>
+            </ion-content>
+          </div>
+        </script>
+        <script id="complete-task.html" type="text/ng-template">
+          <div class="modal">
+            <!-- Cabecera del dialogo modal -->
+            <ion-header-bar class="bar-royal">
+              <h1 class="title">¿Cuanto has gastado?</h1>
+              <!--Buton clear limpia el estilo del boton -->
+              <button class="button button-large button-stable" ng-click="closeCompleteTask()"> &nbsp;
+                <i class="ion-close" style="color:red"></i>
+                &nbsp;
+              </button>
+            </ion-header-bar>
+
+            <!-- Contenido del dialogo modal -->
+            <ion-content>
+              <!--Cuando se envia el formulario, se crea una tarea -->
+                <!--Div que contiene un input para añadir la tarea -->
+                <div class="list">
+                  <label class="item item-input" >
+                    <span class="input-label" >Gasto total:</span>
+                    <input type="number" placeholder="Dinero gastado en estos articulos" ng-model="listaActiva.gasto"></input>
+                  </label>
+                </div>
+                <!--Div con el boton para añadir enviar el formulario -->
+                <!--Clase padding para separarlo de los bordes -->
+                <div class="list" style="text-align: center" >
+                  <button type="submit" class="button" style="color: #642EFE" ng-click="completeTask(listaActiva.gasto)"> <i class="ion-checkmark-round"></i> Confirmar gasto en {{listaActiva.backup_title}}
+                  </button>
+                </div>
+            </ion-content>
+          </div>
+        </script>
+         <script id="complete-subtask.html" type="text/ng-template">
+          <div class="modal">
+            <!-- Cabecera del dialogo modal -->
+            <ion-header-bar class="bar-royal">
+              <h1 class="title">¿Cuanto has gastado?</h1>
+              <!--Buton clear limpia el estilo del boton -->
+              <button class="button button-large button-stable" ng-click="closeCompletesubTask()"> &nbsp;
+                <i class="ion-close" style="color:red"></i>
+                &nbsp;
+              </button>
+            </ion-header-bar>
+
+            <!-- Contenido del dialogo modal -->
+            <ion-content>
+              <!--Cuando se envia el formulario, se crea una tarea -->
+                <!--Div que contiene un input para añadir la tarea -->
+                <div class="list">
+                  <label class="item item-input" >
+                    <span class="input-label" placeholder="Dinero gastado en esta lista" >Gasto total:</span>
+                    <input type="number" placeholder="Dinero gastado en estos articulos" ng-model="sublistaActiva.gasto"></input>
+                  </label>
+                </div>
+                <!--Div con el boton para añadir enviar el formulario -->
+                <!--Clase padding para separarlo de los bordes -->
+                <div class="list" style="text-align: center" >
+                  <button type="submit" class="button" style="color: #642EFE" ng-click="completesubTask(sublistaActiva.gasto)"> <i class="ion-checkmark-round"></i> Confirmar gasto en {{sublistaActiva.backup_title}}
+                  </button>
+                </div>
+
+            </ion-content>
+          </div>
+        </script>
+
+        <script id="delete-list.html" type="text/ng-template">
+
+          <!-- Aqui va el HTML de la template -->
+          <!-- Borrar lista -->
+          <div class="modal">
+
+                <div class="modal-header">
+                    <a href="#" data-dismiss="modal" aria-hidden="true" class="close">×</a>
+                     <h3>Delete</h3>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estas seguro de que quieres borrarla?</p>
+                </div>
+                <div class="modal-footer">
+                  <a href="#" id="btnYes" class="btn danger">OK</a>
+                  <a href="#" data-dismiss="modal" aria-hidden="true" class="btn secondary">Cancelar</a>
+                </div>
+          </div>
+        </script>
+
+    </ion-side-menus>
+
+<!--     <ion-pane>
+      <ion-header-bar class="bar-stable">
+        <h1 class="title">Ionic Blank Starter</h1>
+      </ion-header-bar>
+      <ion-content>
+      </ion-content>
+    </ion-pane> -->
+  </body>
+</html>

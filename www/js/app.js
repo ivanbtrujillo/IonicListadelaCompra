@@ -117,7 +117,7 @@ angular.module('starter', ['ionic'])
 
       //Ocultamos el modal
       $scope.taskModal.hide();
-      alert(parseFloat($scope.listaActiva.gasto));
+
       if(parseFloat($scope.listaActiva.gasto) > 0){
         disminuir_gasto_total($scope.listaActiva.gasto);
       }

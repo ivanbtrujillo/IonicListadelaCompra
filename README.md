@@ -13,6 +13,7 @@ $ sudo npm install -g cordova
 Para compilar para cada plataforma hay que tener instalado el SDK de cada una y compilar con:
 ```bash
 $ ionic run android/ios
+```
 
 ## Instalación
 
